@@ -30,6 +30,8 @@ public class UserAccount implements UserDetails {
 
     private String email;
     @Setter
+    private String telefon;
+    @Setter
     private String password;
     @Setter
     String numberBook;
@@ -65,7 +67,7 @@ public class UserAccount implements UserDetails {
         this.examsFlags = new HashMap<>();
     }
 
-    public UserAccount(String username, String password, String firstName, String lastName, String numberbBook, String city, String code,String group, String speciality) {
+    public UserAccount(String username, String password, String firstName, String lastName, String telefon, String numberbBook, String city, String code,String group, String speciality) {
         this.username = username;
         this.password = password;
         this.firstName = firstName;
@@ -74,6 +76,7 @@ public class UserAccount implements UserDetails {
         this.group = group;
         this.speciality = speciality;
         this.city = city;
+        this.telefon = telefon;
         this.dateRegistered = LocalDate.now();
         this.roles = new HashSet<>();
         this.progres = new ArrayList<>();

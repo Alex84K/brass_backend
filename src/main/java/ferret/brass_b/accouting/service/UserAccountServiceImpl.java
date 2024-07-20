@@ -165,6 +165,21 @@ public class UserAccountServiceImpl implements UserAccountService, CommandLineRu
         if (data.getLastName() != null && !data.getLastName().equals(userAccount.getLastName())) {
             userAccount.setLastName(data.getLastName());
         }
+        if (data.getCity() != null && !data.getCity().equals(userAccount.getCity())) {
+            userAccount.setCity(data.getCity());
+        }
+        if (data.getImage() != null && !data.getImage().equals(userAccount.getImage())) {
+            userAccount.setImage(data.getImage());
+        }
+        if (data.getTelefon() != null && !data.getTelefon().equals(userAccount.getTelefon())) {
+            userAccount.setTelefon(data.getTelefon());
+        }
+        if (data.getGroup() != null && !data.getGroup().equals(userAccount.getGroup())) {
+            userAccount.setGroup(data.getGroup());
+        }
+        if (data.getSpeciality() != null && !data.getSpeciality().equals(userAccount.getSpeciality())) {
+            userAccount.setSpeciality(data.getSpeciality());
+        }
         userRepository.save(userAccount);
         return modelMapper.map(userAccount, UserResponseDto.class);
     }
@@ -256,7 +271,7 @@ public class UserAccountServiceImpl implements UserAccountService, CommandLineRu
     public void run(String... args) throws Exception {
         if (!userRepository.existsByUsernameIgnoreCase("admin")) {
             String password = passwordEncoder.encode("admin");
-            UserAccount userAccount = new UserAccount("admin", password, "admin", "admin", "---", "---", "---", "---", "---");
+            UserAccount userAccount = new UserAccount("admin", password, "admin", "admin", "---", "---", "---", "---", "---", "---");
             userAccount.addRole(Role.MODERATOR.toString());
             userAccount.addRole(Role.ADMINISTRATOR.toString());
             userRepository.save(userAccount);

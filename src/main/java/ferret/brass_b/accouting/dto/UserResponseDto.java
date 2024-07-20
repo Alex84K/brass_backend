@@ -20,6 +20,7 @@ public class UserResponseDto {
     String firstName;
     String lastName;
     String email;
+    String telefon;
     String numberBook;
     String city;
     String group;

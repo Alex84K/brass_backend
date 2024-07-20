@@ -1,5 +1,6 @@
 package ferret.brass_b.accouting.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -18,4 +19,13 @@ public class UserEditRequestDto {
     @NotNull(message = "Last name must contain only letters and spaces")
     @NotBlank(message = "Last name must contain only letters and spaces")
     String lastName;
+
+    String telefon;
+    String username;
+    String email;
+    String numberBook;
+    String city;
+    String group;
+    String speciality;
+    String image;
 }
