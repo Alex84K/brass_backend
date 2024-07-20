@@ -29,6 +29,8 @@ public class UserRegistrationRequestDto {
     @NotNull(message = "Email is mandatory")
     @Pattern(regexp ="^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$",message = "Email has invalid format")
     String email;
+    String telefon;
+    String speciality;
 
     public String getEmail() {
         return email.toLowerCase();

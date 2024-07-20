@@ -132,7 +132,6 @@ public class UserAccountServiceImpl implements UserAccountService, CommandLineRu
     public UserResponseDto deleteUserById(String userId) {
         UserAccount userAccount = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
         userRepository.deleteById(userId);
-        userRepository.save(userAccount);
         return modelMapper.map(userAccount, UserResponseDto.class);
     }
 
