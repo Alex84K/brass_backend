@@ -132,6 +132,7 @@ public class UserAccountServiceImpl implements UserAccountService, CommandLineRu
     public UserResponseDto deleteUserById(String userId) {
         UserAccount userAccount = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
         userRepository.deleteById(userId);
+        userRepository.save(userAccount);
         return modelMapper.map(userAccount, UserResponseDto.class);
     }
 
@@ -179,6 +180,9 @@ public class UserAccountServiceImpl implements UserAccountService, CommandLineRu
         }
         if (data.getSpeciality() != null && !data.getSpeciality().equals(userAccount.getSpeciality())) {
             userAccount.setSpeciality(data.getSpeciality());
+        }
+        if (data.getNumberBook() != null && !data.getNumberBook().equals(userAccount.getNumberBook())) {
+            userAccount.setNumberBook(data.getNumberBook());
         }
         userRepository.save(userAccount);
         return modelMapper.map(userAccount, UserResponseDto.class);
