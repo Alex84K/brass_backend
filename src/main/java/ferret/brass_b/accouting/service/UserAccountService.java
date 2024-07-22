@@ -61,7 +61,7 @@ public interface UserAccountService {
 
     UserResponseDto findStudentByNumberBook(String numberBook);
 
-    Boolean examDistribution(String group, String examId);
+    //
     Boolean examFlagByUser(String userId, String examId);
     Boolean deleteExamFlag(String userId, String examId);
 }

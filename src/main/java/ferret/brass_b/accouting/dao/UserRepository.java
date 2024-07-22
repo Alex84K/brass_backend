@@ -1,9 +1,7 @@
 package ferret.brass_b.accouting.dao;
 
-import ferret.brass_b.accouting.dto.UserResponseDto;
 import ferret.brass_b.accouting.model.UserAccount;
 import org.springframework.data.mongodb.repository.MongoRepository;
-import org.springframework.data.repository.query.Param;
 
 import java.util.Optional;
 import java.util.stream.Stream;
@@ -16,6 +14,8 @@ public interface UserRepository extends MongoRepository<UserAccount, String> {
     Optional<UserAccount> findByNumberBook(String numberBook);
     Optional<UserAccount> deleteUserById(String userId);
     Optional<UserAccount> findByNumberBookEquals(String numberBook);
+
+    Optional<UserAccount> deleteUserExamById(String userId, String exam);
 
     Optional<UserAccount> findByUsernameIgnoreCase(String username);
 

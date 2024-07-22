@@ -33,5 +33,5 @@ public class UserResponseDto {
     Set<String> roles;
     private ArrayList<Exam> progres;
     private Map<String, String> materials;
-    private Map<String, String> examsFlags;
+    private Set<ExamDto> examsFlags;
 }

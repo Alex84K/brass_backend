@@ -327,7 +327,7 @@ public class UserAccountServiceImpl implements UserAccountService, CommandLineRu
         ExamGlobal examGlobal = examRepository.findById(exam.getExamId()).orElseThrow(ExamNotFoundException::new);
         Exam exm = new Exam(exam.getExamId(), exam.getExam(), exam.getScore(), LocalDate.now(), exam.getTeacher());
         userAccount.addProgres(exm);
-        userAccount.editExamFlags(exam.getExamId(), true);
+        userAccount.addExamFlags(exm);
         userRepository.save(userAccount);
         return modelMapper.map(userAccount, UserResponseDto.class);
     }
@@ -337,7 +337,7 @@ public class UserAccountServiceImpl implements UserAccountService, CommandLineRu
         UserAccount user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
         Exam exam = modelMapper.map(examDto, Exam.class);
         user.removeProgres(exam);
-        user.editExamFlags(exam.getExamId(), false);
+        user.addExamFlags(exam);
         userRepository.save(user);
         return modelMapper.map(user, UserResponseDto.class);
     }
@@ -347,12 +347,11 @@ public class UserAccountServiceImpl implements UserAccountService, CommandLineRu
         UserAccount user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
         Exam exam = modelMapper.map(examDto, Exam.class);
         user.editProgres(exam);
-        user.editExamFlags(exam.getExamId(), true);
         userRepository.save(user);
         return modelMapper.map(user, UserResponseDto.class);
     }
 
-    @Override
+    /*@Override
     public Boolean examDistribution(String group, String examId) {
         ExamGlobal exam = examRepository.findById(examId).orElseThrow(ExamNotFoundException::new);
         Iterable<UserAccount> users = userRepository.findUsersByGroup(group)
@@ -361,13 +360,14 @@ public class UserAccountServiceImpl implements UserAccountService, CommandLineRu
         users.forEach(u -> u.addExamFlags(examId));
         users.forEach(userRepository::save);
         return true;
-    }
+    }*/
 
     @Override
     public Boolean examFlagByUser(String userId, String examId) {
         UserAccount user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
         ExamGlobal exam = examRepository.findById(examId).orElseThrow(ExamNotFoundException::new);
-        user.addExamFlags(exam.getId());
+        Exam exm = modelMapper.map(exam, Exam.class);
+        user.addExamFlags(exm);
         userRepository.save(user);
         return true;
     }
@@ -375,8 +375,8 @@ public class UserAccountServiceImpl implements UserAccountService, CommandLineRu
     @Override
     public Boolean deleteExamFlag(String userId, String examId) {
         UserAccount user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
-        ExamGlobal exam = examRepository.findById(examId).orElseThrow(ExamNotFoundException::new);
-        user.removeExamFlags(examId);
+        Exam e = new Exam(examId, "", 0, LocalDate.now(), "");
+        user.removeExamFlags(e);
         userRepository.save(user);
         return true;
     }

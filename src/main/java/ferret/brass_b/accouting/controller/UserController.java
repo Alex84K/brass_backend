@@ -160,10 +160,10 @@ public class UserController {
         return userAccountService.findStudentByNumberBook(numberBook);
     }
 
-    @GetMapping("/group/{numberGroup}/exams/{examId}")
+    /*@GetMapping("/group/{numberGroup}/exams/{examId}")
     public Boolean examDistribution(@PathVariable String numberGroup, @PathVariable String examId){
         return userAccountService.examDistribution(numberGroup, examId);
-    }
+    }*/
 
     @GetMapping("/{userId}/exams/{examId}")
     public Boolean examFlagByUser(@PathVariable String userId, @PathVariable String examId){

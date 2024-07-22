@@ -54,7 +54,7 @@ public class UserAccount implements UserDetails {
 
     private ArrayList<Exam> progres;
     private Map<String, String> materials;
-    private Map<String, Boolean> examsFlags;
+    private Set<Exam> examsFlags;
 
 
     public UserAccount() {
@@ -64,7 +64,7 @@ public class UserAccount implements UserDetails {
         this.roles = new HashSet<>();
         this.progres = new ArrayList<>();
         materials = new HashMap<>();
-        this.examsFlags = new HashMap<>();
+        this.examsFlags = new HashSet<>();
     }
 
     public UserAccount(String username, String password, String firstName, String lastName, String telefon, String numberbBook, String city, String code,String group, String speciality) {
@@ -83,7 +83,7 @@ public class UserAccount implements UserDetails {
         materials = new HashMap<>();
         this.codeForEmail = code;
         this.isEmailActivated = false;
-        examsFlags = new HashMap<>();
+        examsFlags = new HashSet<>();
     }
 
     public boolean addRole(String role) {
@@ -130,16 +130,12 @@ public class UserAccount implements UserDetails {
         return materials.remove(materialName) == null;
     }
 
-    public boolean addExamFlags(String examId) {
-        return examsFlags.put(examId, false) == null;
+    public void addExamFlags(Exam exam) {
+        examsFlags.add(exam);
     }
 
-    public void removeExamFlags(String examId) {
-        examsFlags.remove(examId);
-    }
-
-    public boolean editExamFlags(String examId, Boolean b) {
-        return examsFlags.put(examId, b) == null;
+    public void removeExamFlags(Exam exam) {
+        examsFlags.remove(exam);
     }
 
     @Override

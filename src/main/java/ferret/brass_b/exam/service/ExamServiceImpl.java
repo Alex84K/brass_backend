@@ -2,6 +2,8 @@ package ferret.brass_b.exam.service;
 
 import ferret.brass_b.accouting.dao.UserRepository;
 import ferret.brass_b.accouting.dto.UserResponseDto;
+import ferret.brass_b.accouting.model.Exam;
+import ferret.brass_b.accouting.model.UserAccount;
 import ferret.brass_b.exam.dao.ExamRepository;
 import ferret.brass_b.exam.dto.ExamCreatedGlobalDto;
 import ferret.brass_b.exam.dto.ExamGlobalDto;
@@ -20,12 +22,19 @@ public class ExamServiceImpl implements ExamService{
 
     private final ExamRepository examRepository;
     private final ModelMapper modelMapper;
+    private final UserRepository userRepository;
 
     @Override
     public ExamGlobalDto addExam(ExamCreatedGlobalDto exam) {
         ExamGlobal examGlobal = modelMapper.map(exam, ExamGlobal.class);
         examGlobal.setDataCreated(LocalDate.now());
         examRepository.save(examGlobal);
+        Exam exm = new Exam(examGlobal.getId(), exam.getExamName(), 0, examGlobal.getDataCreated(), examGlobal.getTeacher());
+        Iterable<UserAccount> users = userRepository.findUsersByGroup(exam.getGroup())
+                .filter(userAccount -> userAccount.getGroup().equals(exam.getGroup()))
+                .toList();
+        users.forEach(u -> u.addExamFlags(exm));
+        users.forEach(userRepository::save);
         return modelMapper.map(examGlobal, ExamGlobalDto.class);
     }
 
@@ -38,7 +47,13 @@ public class ExamServiceImpl implements ExamService{
     @Override
     public ExamGlobalDto deleteExamById(String examId) {
         ExamGlobal examGlobal = examRepository.findById(examId).orElseThrow(ExamNotFoundException::new);
+        Exam e = new Exam(examId, "", 0, LocalDate.now(), "");
         examRepository.deleteById(examId);
+
+        userRepository.findAll()
+                .stream()
+                .peek(userAccount -> userAccount.removeExamFlags(e))
+                .forEach(userRepository::save);
         return modelMapper.map(examGlobal, ExamGlobalDto.class);
     }
 
@@ -63,4 +78,6 @@ public class ExamServiceImpl implements ExamService{
     public Iterable<ExamGlobalDto> findExamsByYear(String year) {
         return null;
     }
+
+
 }
