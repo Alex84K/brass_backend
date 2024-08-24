@@ -130,23 +130,23 @@ public class UserController {
         }
     }
 
-    @DeleteMapping("/{userId}/exams")
-    public UserResponseDto removeExam(@PathVariable String userId, @RequestBody ExamDto examDto){
-        return userAccountService.removeExam(userId, examDto);
+    @DeleteMapping("/{userId}/exams/scores/{examId}")
+    public UserResponseDto removeExam(@PathVariable String userId, @PathVariable String examId){
+        return userAccountService.removeExam(userId, examId);
     }
 
-    @PutMapping("/{userId}/exams")
+    @PutMapping("/{userId}/exams/scores")
     public UserResponseDto editExam(@PathVariable String userId, @RequestBody ExamDto examDto){
         return userAccountService.editExam(userId, examDto);
     }
 
     @PutMapping("/materials/students/{userId}")
-    public Boolean addMaterial(@PathVariable String userId, @RequestBody MaterialsDto material) {
+    public Boolean addMaterial(@PathVariable String userId, @RequestBody MaterialDto material) {
         return userAccountService.addMaterial(userId, material);
     }
 
     @DeleteMapping("/materials/students/{userId}")
-    public Boolean delMaterial(@PathVariable String userId, @RequestBody MaterialsDto materialsDto) {
+    public Boolean delMaterial(@PathVariable String userId, @RequestBody MaterialDto materialsDto) {
         return userAccountService.removeMaterial(userId, materialsDto);
     }
 
@@ -171,7 +171,7 @@ public class UserController {
     }
 
     @DeleteMapping("/{userId}/exams/{examId}")
-    public Boolean deleteExamFlag(@PathVariable String userId, @PathVariable String examId){
+    public UserResponseDto deleteExamFlag(@PathVariable String userId, @PathVariable String examId){
         return userAccountService.deleteExamFlag(userId, examId);
     }
 }

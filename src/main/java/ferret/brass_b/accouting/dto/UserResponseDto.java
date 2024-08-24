@@ -2,6 +2,7 @@ package ferret.brass_b.accouting.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import ferret.brass_b.accouting.model.Exam;
+import ferret.brass_b.materials.model.Material;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -33,5 +34,6 @@ public class UserResponseDto {
     Set<String> roles;
     private ArrayList<Exam> progres;
     private Map<String, String> materials;
+    private Map<String, Material> materialsСonsumer;
     private Set<ExamDto> examsFlags;
 }

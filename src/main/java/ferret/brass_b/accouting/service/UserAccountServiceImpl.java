@@ -7,8 +7,11 @@ import ferret.brass_b.accouting.model.Exam;
 import ferret.brass_b.accouting.model.Role;
 import ferret.brass_b.accouting.model.UserAccount;
 import ferret.brass_b.exam.dao.ExamRepository;
+import ferret.brass_b.exam.dto.ExamGlobalDto;
 import ferret.brass_b.exam.dto.exception.ExamNotFoundException;
 import ferret.brass_b.exam.model.ExamGlobal;
+import ferret.brass_b.materials.dao.MaterialsRepository;
+import ferret.brass_b.materials.model.Material;
 import ferret.brass_b.utils.PagedDataResponseDto;
 import jakarta.servlet.http.Cookie;
 import lombok.RequiredArgsConstructor;
@@ -44,6 +47,7 @@ public class UserAccountServiceImpl implements UserAccountService, CommandLineRu
     private final ModelMapper modelMapper;
     private final PasswordEncoder passwordEncoder;
     private final ExamRepository examRepository;
+    final MaterialsRepository materialsRepository;
 
     @Override
     public Boolean registerTeacher(UserRegistrationRequestDto data, String pass) {
@@ -168,9 +172,9 @@ public class UserAccountServiceImpl implements UserAccountService, CommandLineRu
         if (data.getCity() != null && !data.getCity().equals(userAccount.getCity())) {
             userAccount.setCity(data.getCity());
         }
-        if (data.getImage() != null && !data.getImage().equals(userAccount.getImage())) {
+        /*if (data.getImage() != null && !data.getImage().equals(userAccount.getImage())) {
             userAccount.setImage(data.getImage());
-        }
+        }*/
         if (data.getTelefon() != null && !data.getTelefon().equals(userAccount.getTelefon())) {
             userAccount.setTelefon(data.getTelefon());
         }
@@ -182,6 +186,9 @@ public class UserAccountServiceImpl implements UserAccountService, CommandLineRu
         }
         if (data.getNumberBook() != null && !data.getNumberBook().equals(userAccount.getNumberBook())) {
             userAccount.setNumberBook(data.getNumberBook());
+        }
+        if (data.getUsername() != null && !data.getUsername().equals(userAccount.getUsername())) {
+            userAccount.setUsername(data.getUsername());
         }
         userRepository.save(userAccount);
         return modelMapper.map(userAccount, UserResponseDto.class);
@@ -290,19 +297,24 @@ public class UserAccountServiceImpl implements UserAccountService, CommandLineRu
     }
 
     @Override
-    public Boolean addMaterial(String userId, MaterialsDto material) {
+    public Boolean addMaterial(String userId, MaterialDto material) {
         UserAccount user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
         if(user.getMaterials().entrySet().equals(material)) {
             return false;
         } else {
             boolean res = user.addMaterial(material.getMaterialName(), material.getLink());
             userRepository.save(user);
+            Material m = modelMapper.map(material, Material.class);
+            m.setTitle(material.getMaterialName());
+            m.setTags(null);
+            m.setPublisherId(userId);
+            materialsRepository.save(m);
             return res;
         }
     }
 
     @Override
-    public Boolean removeMaterial(String userId, MaterialsDto material) {
+    public Boolean removeMaterial(String userId, MaterialDto material) {
         UserAccount user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
         boolean res = user.removeMaterial(material.getMaterialName());
         userRepository.save(user);
@@ -327,17 +339,23 @@ public class UserAccountServiceImpl implements UserAccountService, CommandLineRu
         ExamGlobal examGlobal = examRepository.findById(exam.getExamId()).orElseThrow(ExamNotFoundException::new);
         Exam exm = new Exam(exam.getExamId(), exam.getExam(), exam.getScore(), LocalDate.now(), exam.getTeacher());
         userAccount.addProgres(exm);
-        userAccount.addExamFlags(exm);
+        userAccount.removeExamFlags(exm);
         userRepository.save(userAccount);
         return modelMapper.map(userAccount, UserResponseDto.class);
     }
 
     @Override
-    public UserResponseDto removeExam(String userId, ExamDto examDto) {
+    public UserResponseDto removeExam(String userId, String examId) {
         UserAccount user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
-        Exam exam = modelMapper.map(examDto, Exam.class);
+        Exam exam = new Exam(examId, "", 0, LocalDate.now(), "");
         user.removeProgres(exam);
-        user.addExamFlags(exam);
+        try {
+            ExamGlobal examGlobal = examRepository.findById(examId).orElseThrow(ExamNotFoundException::new);
+            Exam e = new Exam(examGlobal.getId(), examGlobal.getExamName(), 0, examGlobal.getDataCreated(), examGlobal.getTeacher());
+            user.addExamFlags(e);
+        } catch (BadCredentialsException e) {
+            user.removeExamFlags(exam);
+        }
         userRepository.save(user);
         return modelMapper.map(user, UserResponseDto.class);
     }
@@ -345,7 +363,7 @@ public class UserAccountServiceImpl implements UserAccountService, CommandLineRu
     @Override
     public UserResponseDto editExam(String userId, ExamDto examDto) {
         UserAccount user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
-        Exam exam = modelMapper.map(examDto, Exam.class);
+        Exam exam = new Exam(examDto.getExamId(), examDto.getExam(), examDto.getScore(), LocalDate.now(), examDto.getTeacher());
         user.editProgres(exam);
         userRepository.save(user);
         return modelMapper.map(user, UserResponseDto.class);
@@ -373,11 +391,11 @@ public class UserAccountServiceImpl implements UserAccountService, CommandLineRu
     }
 
     @Override
-    public Boolean deleteExamFlag(String userId, String examId) {
+    public UserResponseDto deleteExamFlag(String userId, String examId) {
         UserAccount user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
         Exam e = new Exam(examId, "", 0, LocalDate.now(), "");
         user.removeExamFlags(e);
         userRepository.save(user);
-        return true;
+        return modelMapper.map(user, UserResponseDto.class);
     }
 }

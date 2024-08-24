@@ -1,5 +1,8 @@
 package ferret.brass_b.materials.service;
 
+import ferret.brass_b.accouting.dao.UserRepository;
+import ferret.brass_b.accouting.dto.exceptions.UserNotFoundException;
+import ferret.brass_b.accouting.model.UserAccount;
 import ferret.brass_b.materials.dao.MaterialsRepository;
 import ferret.brass_b.materials.dto.CreateMaterialDto;
 import ferret.brass_b.materials.dto.MaterialDto;
@@ -21,12 +24,16 @@ public class MaterialServiceImpl implements MaterialService{
 
     final MaterialsRepository materialsRepository;
     final ModelMapper modelMapper;
+    private final UserRepository userRepository;
 
     @Override
-    public MaterialDto addNewMaterial(String publisher, CreateMaterialDto newMaterial) {
+    public MaterialDto addNewMaterial(String publisherId, CreateMaterialDto newMaterial) {
+        UserAccount user = userRepository.findById(publisherId).orElseThrow(UserNotFoundException::new);
         Material material = modelMapper.map(newMaterial, Material.class);
-        material.setPublisher(publisher);
+        material.setPublisherId(publisherId);
         material = materialsRepository.save(material);
+        user.addMaterial(newMaterial.getTitle(), newMaterial.getLink());
+        userRepository.save(user);
         return modelMapper.map(material, MaterialDto.class);
     }
 
@@ -40,6 +47,10 @@ public class MaterialServiceImpl implements MaterialService{
     public MaterialDto removeMaterial(String id) {
         Material material = materialsRepository.findById(id).orElseThrow(MaterialNotFoundException::new);
         materialsRepository.delete(material);
+        userRepository.findAll()
+                .stream()
+                .peek(userAccount -> userAccount.removeMaterial(material.getTitle()))
+                .forEach(userRepository::save);
         return modelMapper.map(material, MaterialDto.class);
     }
 
@@ -63,8 +74,8 @@ public class MaterialServiceImpl implements MaterialService{
     }
 
     @Override
-    public Iterable<MaterialDto> findMaterialsByPublisher(String publisher) {
-        return materialsRepository.findByPublisherIgnoreCase(publisher)
+    public Iterable<MaterialDto> findMaterialsByPublisher(String publisherId) {
+        return materialsRepository.findByPublisherId(publisherId)
                 .map(m -> modelMapper.map(m, MaterialDto.class))
                 .toList();
     }
@@ -86,5 +97,11 @@ public class MaterialServiceImpl implements MaterialService{
         materialDataDto.setTotalPages(pageMapped.getTotalPages());
         materialDataDto.setCurrentPage(pageMapped.getNumber());
         return materialDataDto;
+    }
+
+    @Override
+    public Boolean distributionMaterialBygroup(String group) {
+
+        return null;
     }
 }

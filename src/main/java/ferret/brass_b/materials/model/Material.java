@@ -20,16 +20,16 @@ public class Material {
     @Setter
     Set<String> tags;
     @Setter
-    String publisher;
+    String publisherId;
     @Setter
     String link;
     LocalDateTime dateCreated = LocalDateTime.now();;
 
-    public Material(String id, String title, Set<String> tags, String publisher, String link) {
+    public Material(String id, String title, Set<String> tags, String publisherId, String link) {
         this.id = id;
         this.title = title;
         this.tags = tags;
-        this.publisher = publisher;
+        this.publisherId = publisherId;
         this.link = link;
     }
 

@@ -9,7 +9,7 @@ import java.util.Set;
 import java.util.stream.Stream;
 
 public interface MaterialsRepository extends MongoRepository<Material, String> {
-   Stream<Material> findByPublisherIgnoreCase(String publisher);
+   Stream<Material> findByPublisherId(String publisherId);
 
     Stream<Material> findByTagsInIgnoreCase(Set<String> tags);
 

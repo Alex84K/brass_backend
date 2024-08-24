@@ -16,7 +16,7 @@ public class MaterialDto {
     private String id;
     private String title;
     private Set<String> tags;
-    private String publisher;
+    private String publisherId;
     private String link;
     private LocalDateTime dateCreated;
 }

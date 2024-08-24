@@ -36,11 +36,11 @@ public interface UserAccountService {
     Iterable<UserResponseDto> findUsersBySpeciality(String speciality);
 
     UserResponseDto addExam(String userId, ExamDto examDto);
-    UserResponseDto removeExam(String userId, ExamDto examDto);
+    UserResponseDto removeExam(String userId, String examId);
     UserResponseDto editExam(String userId, ExamDto examDto);
 
-    Boolean addMaterial(String userId, MaterialsDto materialsDto);
-    Boolean removeMaterial(String userId, MaterialsDto materialsDto);
+    Boolean addMaterial(String userId, MaterialDto materialsDto);
+    Boolean removeMaterial(String userId, MaterialDto materialsDto);
     UserResponseDto changeEmail(String userId, String password);
 
     //void changePassword(String userId, String password);
@@ -63,5 +63,5 @@ public interface UserAccountService {
 
     //
     Boolean examFlagByUser(String userId, String examId);
-    Boolean deleteExamFlag(String userId, String examId);
+    UserResponseDto deleteExamFlag(String userId, String examId);
 }

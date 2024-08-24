@@ -59,7 +59,25 @@ public class ExamServiceImpl implements ExamService{
 
     @Override
     public ExamGlobalDto editExamById(String examId, ExamCreatedGlobalDto exam) {
-        return null;
+        ExamGlobal examGlobal = examRepository.findById(examId).orElseThrow(ExamNotFoundException::new);
+        examGlobal.setExamName(exam.getExamName());
+        examGlobal.setGroup(exam.getGroup());
+        examGlobal.setTeacher(exam.getTeacher());
+        examRepository.save(examGlobal);
+        //delete for user
+        Exam e = new Exam(examId, "", 0, LocalDate.now(), "");
+        userRepository.findAll()
+                .stream()
+                .peek(userAccount -> userAccount.removeExamFlags(e))
+                .forEach(userRepository::save);
+        //create & distribution
+        Exam exm = new Exam(examGlobal.getId(), exam.getExamName(), 0, examGlobal.getDataCreated(), examGlobal.getTeacher());
+        Iterable<UserAccount> users = userRepository.findUsersByGroup(exam.getGroup())
+                .filter(userAccount -> userAccount.getGroup().equals(exam.getGroup()))
+                .toList();
+        users.forEach(u -> u.addExamFlags(exm));
+        users.forEach(userRepository::save);
+        return modelMapper.map(examGlobal, ExamGlobalDto.class);
     }
 
     @Override

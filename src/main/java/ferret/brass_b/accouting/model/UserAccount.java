@@ -1,5 +1,6 @@
 package ferret.brass_b.accouting.model;
 
+import ferret.brass_b.materials.model.Material;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -21,7 +22,7 @@ public class UserAccount implements UserDetails {
 
     @Id
     private String id;
-
+    @Setter
     private String username;
     @Setter
     private String firstName;
@@ -54,6 +55,7 @@ public class UserAccount implements UserDetails {
 
     private ArrayList<Exam> progres;
     private Map<String, String> materials;
+    private Map<String, Material> materialsСonsumer;
     private Set<Exam> examsFlags;
 
 
@@ -72,6 +74,7 @@ public class UserAccount implements UserDetails {
         this.password = password;
         this.firstName = firstName;
         this.lastName = lastName;
+        this.image = "https://gravatar.com/avatar/0?d=retro";
         this.numberBook = numberbBook;
         this.group = group;
         this.speciality = speciality;
@@ -81,6 +84,7 @@ public class UserAccount implements UserDetails {
         this.roles = new HashSet<>();
         this.progres = new ArrayList<>();
         materials = new HashMap<>();
+        materialsСonsumer = new HashMap<>();
         this.codeForEmail = code;
         this.isEmailActivated = false;
         examsFlags = new HashSet<>();
@@ -130,12 +134,27 @@ public class UserAccount implements UserDetails {
         return materials.remove(materialName) == null;
     }
 
+    public boolean addMaterialСonsumer(String materialId, Material material) {
+        return materialsСonsumer.put(materialId, material) == null;
+    }
+
+    public boolean removeMaterialСonsumer(String materialId) {
+        return materialsСonsumer.remove(materialId) == null;
+    }
+
     public void addExamFlags(Exam exam) {
         examsFlags.add(exam);
     }
 
     public void removeExamFlags(Exam exam) {
-        examsFlags.remove(exam);
+        Iterator<Exam> examIterator = examsFlags.iterator();
+        while (examIterator.hasNext()) {
+            Exam nextExam = examIterator.next();
+            if (nextExam.getExamId().equals(exam.examId)) {
+                examIterator.remove();
+            }
+        }
+        //examsFlags.remove(exam);
     }
 
     @Override

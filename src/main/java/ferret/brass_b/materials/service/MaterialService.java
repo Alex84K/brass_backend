@@ -22,4 +22,6 @@ public interface MaterialService {
     Iterable<MaterialDto> findMaterialsByTags(Set<String> tags);
 
     PagedDataResponseDto<MaterialDto> findAll(PageRequest pageRequest);
+
+    Boolean distributionMaterialBygroup(String group);
 }
